@@ -2,6 +2,9 @@ package LeetCode;
 
 public class prob450 {
     public static TreeNode deleteNode(TreeNode t, int key) {
+        if (t == null) {
+            return null;
+        }
         //1) node is the root
         if (t.val == key) {
             if (t.left != null && t.right == null) {
@@ -27,11 +30,15 @@ public class prob450 {
             //2) node is a child from the left/right with no children (at the end of a tree)
             //3) node is a child from the left/right with some child on the left/right
             if (t.left != null && t.right == null) {
-                TreeNode parent = findParentNode(t.left, t, key);
-                if (parent.left != null) {
-
+                TreeNode[] nodes = {t, t.left, null, null};
+                if (t.left.left != null) {
+                    nodes[2] = t.left.left;
                 }
-            } else if (t.left == null && t.right != null) {
+                if (t.left.right != null) {
+                    nodes[3] = t.left.right;
+                }
+                findNode(nodes, key);
+            } else if (t.right != null && t.left == null) {
 
             } else if (t.left != null) {
 
@@ -39,16 +46,32 @@ public class prob450 {
         }
         return t;
     }
-    public static TreeNode findParentNode(TreeNode child, TreeNode parent, int key) {
-        if (child.val != key) {
-            if (child.left != null) {
-                return findParentNode(child.left, child, key);
-            }
-            if (child.right != null) {
-                return findParentNode(child.right, child, key);
+    //{parent, child, child.left, child.right}; null if doesn't exist
+    public static TreeNode[] findNode(TreeNode[] t, int key) {
+        TreeNode[] output = new TreeNode[4];
+        if (t[1] != null && t[0] != null) {
+            if (t[1].val == key) {
+                output = t;
+            } else {
+                TreeNode[] nodes = new TreeNode[4];
+                if (t[1].left != null && t[1].right == null) {
+                    nodes[0] = t[1].left;
+                    if (t[1].left.left != null && t[1].left.right == null) {
+                        nodes[1] = t[1].left.left;
+
+                    }
+                    if (t[1].left.right != null) {
+                        nodes[3] = t[1].left.right;
+                    }
+                    output = findNode(nodes, key);
+                } else if (t[1].left == null && t[1].right != null) {
+
+                } else if (t[1].left != null) {
+
+                }
             }
         }
-        return parent;
+        return output;
     }
 //    public static TreeNode shiftNode(TreeNode t, TreeNode dir) {
 //        //find the node that can be shifted up
@@ -63,9 +86,9 @@ public class prob450 {
 //        }
 //    }
     public static void main(String[] args) {
-        TreeNode root = new TreeNode(1, new TreeNode(2, new TreeNode(4, new TreeNode(5), null), null), new TreeNode(3));
-        TreeNode answer = new TreeNode(2, new TreeNode(4, new TreeNode(5, new TreeNode(3), null), null), null);
-        System.out.println(answer);
-        System.out.println(deleteNode(root, 1));
+        TreeNode root = new TreeNode(1, new TreeNode(2, new TreeNode(3), null), null);
+//        TreeNode answer = new TreeNode(2, new TreeNode(4, new TreeNode(5, new TreeNode(3), null), null), null);
+//        System.out.println(answer);
+        System.out.println(deleteNode(root, 3));
     }
 }
